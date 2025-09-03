@@ -120,7 +120,7 @@ let properties = [
         title: "Investment Land Package",
         description: "Multiple plots of land available for investment, with potential for high returns.",
         location: "Oke-Oyi, Ilorin",
-        price: "₦25M",
+        price: "₦60M",
         type: "land",
         status: "sale",
         beds: 0,
@@ -1011,30 +1011,30 @@ function initializeContactForm() {
 
 // Submit contact form
 function submitContactForm() {
+    event.preventDefault();
+
     const formData = new FormData(contactForm);
-    const inquiry = {
-        id: inquiries.length + 1,
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        type: formData.get('inquiryType'),
-        message: formData.get('message'),
-        date: new Date().toISOString().split('T')[0]
-    };
-    
-    inquiries.push(inquiry);
-    
-    // Update admin panel if open
-    if (adminModal.style.display === 'block') {
-        loadAdminInquiries();
-    }
-    
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const phone = formData.get('phone');
+    const type = formData.get('inquiryType'); // from your select
+    const message = formData.get('message');
+
+    // Create mailto link
+    const mailtoLink = `mailto:ayandajacob62@gmail.com?subject=${encodeURIComponent(type)}&body=${encodeURIComponent(
+        `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+    )}`;
+
+    // Open user's default email app
+    window.location.href = mailtoLink;
+
     // Reset form
     contactForm.reset();
-    
-    // Show success message
-    showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
+
+    // Show success notification (optional)
+    showNotification('Opening your email app to send message...', 'success');
 }
+
 
 // Initialize animations
 function initializeAnimations() {
