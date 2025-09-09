@@ -313,6 +313,9 @@ const themeManager = {
         const theme = savedTheme || systemTheme;
         
         document.documentElement.setAttribute('data-theme', theme);
+        document.body.classList.remove('light','dark');
+        document.body.classList.add(theme);
+
         this.updateThemeIcon(theme);
     },
 
@@ -341,12 +344,15 @@ const themeManager = {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         this.updateThemeIcon(newTheme);
+
+        document.body.classList.remove('light','dark');
+        document.body.classList.add(newTheme)
         
         // Add transition effect
-        document.body.style.transition = 'all 0.3s ease';
+        document.body.style.transition = 'background-color 0.35s ease, color 0.35s ease';
         setTimeout(() => {
             document.body.style.transition = '';
-        }, 300);
+        }, 400);
     },
 
     updateThemeIcon(theme) {
