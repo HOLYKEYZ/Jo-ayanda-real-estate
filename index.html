@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preload" href="background.jpg" as="image">
     <link rel="preload" href="new logo.jpg" as="image">
+    <link rel="preload" href="newimage.jpg" as="image" fetchpriority="high">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -74,7 +75,7 @@
                 </div>
             </div>
             <div class="hero-media" aria-hidden="false">
-                <img src="newimage.jpg" alt="Modern home model held by hand" />
+                <img src="newimage.jpg" alt="Modern home model held by hand" loading="eager" fetchpriority="high" decoding="async" width="1600" height="1067" />
             </div>
         </div>
     </section>
