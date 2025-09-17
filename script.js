@@ -416,8 +416,8 @@ const searchManager = {
             item.addEventListener('click', () => {
                 elements.searchInput.value = item.dataset.suggestion;
                 this.hideSuggestions();
-                if (typeof searchFilter !== 'undefined' && searchFilter.filterProperties) {
-                    searchFilter.filterProperties();
+                if (typeof filterProperties === 'function') {
+                    filterProperties();
                 }
             });
         });
@@ -520,6 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchManager.init();
     imageManager.init();
     adminPanel.init();
+    initializeSearchAndFilter();
     
     // Load initial data
     if (typeof loadProperties === 'function') {
@@ -898,22 +899,33 @@ const adminPanel = {
 
 // Search and Filter functionality
 function initializeSearchAndFilter() {
+    if (!elements.searchInput || !elements.searchBtn) return;
+
     // Search functionality
-    searchBtn.addEventListener('click', filterProperties);
-    searchInput.addEventListener('input', filterProperties);
-    
+    elements.searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        filterProperties();
+    });
+    elements.searchInput.addEventListener('input', utils.debounce(filterProperties, 200));
+
     // Filter functionality
-    propertyTypeFilter.addEventListener('change', filterProperties);
-    propertyStatusFilter.addEventListener('change', filterProperties);
-    priceRangeFilter.addEventListener('change', filterProperties);
+    if (elements.propertyTypeFilter) {
+        elements.propertyTypeFilter.addEventListener('change', filterProperties);
+    }
+    if (elements.propertyStatusFilter) {
+        elements.propertyStatusFilter.addEventListener('change', filterProperties);
+    }
+    if (elements.priceRangeFilter) {
+        elements.priceRangeFilter.addEventListener('change', filterProperties);
+    }
 }
 
 // Filter properties based on search and filters
 function filterProperties() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const typeFilter = propertyTypeFilter.value;
-    const statusFilter = propertyStatusFilter.value;
-    const priceFilter = priceRangeFilter.value;
+    const searchTerm = (elements.searchInput?.value || '').toLowerCase();
+    const typeFilter = elements.propertyTypeFilter?.value || '';
+    const statusFilter = elements.propertyStatusFilter?.value || '';
+    const priceFilter = elements.priceRangeFilter?.value || '';
 
     const filteredProperties = properties.filter(property => {
         // Search term filter
@@ -960,10 +972,11 @@ function loadProperties() {
 
 // Display properties in the grid
 function displayProperties(propertiesToShow) {
-    propertiesGrid.innerHTML = '';
+    if (!elements.propertiesGrid) return;
+    elements.propertiesGrid.innerHTML = '';
     
     if (propertiesToShow.length === 0) {
-        propertiesGrid.innerHTML = `
+        elements.propertiesGrid.innerHTML = `
             <div class="no-properties">
                 <h3>No properties found</h3>
                 <p>Try adjusting your search criteria or filters.</p>
@@ -974,7 +987,7 @@ function displayProperties(propertiesToShow) {
     
     propertiesToShow.forEach(property => {
         const propertyCard = createPropertyCard(property);
-        propertiesGrid.appendChild(propertyCard);
+        elements.propertiesGrid.appendChild(propertyCard);
     });
 }
 
@@ -1153,8 +1166,10 @@ function debounce(func, wait) {
     };
 }
 
-// Debounce search input
-searchInput.addEventListener('input', debounce(filterProperties, 300));
+// Debounce search input (guard against missing element)
+if (elements.searchInput) {
+    elements.searchInput.addEventListener('input', debounce(filterProperties, 300));
+}
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
