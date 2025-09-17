@@ -187,8 +187,9 @@ p {
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
+    background: transparent;
+    color: #1d4ed8;
+    border: 2px solid #1d4ed8;
 }
 
 .btn-secondary {
@@ -201,17 +202,6 @@ p {
     background: var(--primary);
     color: var(--white);
     transform: translateY(-2px);
-}
-
-.btn-accent {
-    background: linear-gradient(135deg, var(--accent), #ef4444);
-    color: var(--white);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-accent:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-xl);
 }
 
 .btn-sm {
@@ -368,34 +358,31 @@ p {
 }
 
 .hero-content {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-4xl);
     align-items: center;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 var(--space-lg);
 }
 
+.hero-left { display: flex; }
+
 .hero-text {
-    max-width: 800px;
-    text-align: center;
+    max-width: 720px;
+    text-align: left;
 }
 
 .hero-title {
-    font-size: var(--font-size-6xl);
-    font-weight: 700;
-    line-height: 1.2; /* small breathing space */
-    margin: 0 0 var(--space-xl) 0; /* reset top margin */
-    padding-top: 0.5rem; /* give space so text no cut */
-    background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-}
-
+    padding-top: 2.5rem;
+    color: #1c54e3; /* Light mode blue */
+  }
+  
+  html[data-theme="dark"] .hero-title {
+    color: #8aa5f2; /* Dark mode blue */
+  }
+  
 
 .hero-subtitle {
     font-size: var(--font-size-xl);
@@ -407,35 +394,11 @@ p {
     hyphens: auto;
 }
 
-.hero-investment {
-    background: rgba(37, 99, 235, 0.1);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    border-radius: var(--radius-xl);
-    padding: var(--space-2xl);
-    margin-bottom: var(--space-2xl);
-    backdrop-filter: blur(10px);
-}
-
-.hero-investment h3 {
-    color: var(--primary);
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--space-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
-.hero-investment p {
-    color: var(--text-secondary);
-    margin-bottom: var(--space-md);
-    line-height: 1.7;
-}
-
 .hero-buttons {
     display: flex;
     gap: var(--space-lg);
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     margin-bottom: var(--space-3xl);
 }
 
@@ -444,6 +407,20 @@ p {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-lg);
     margin-top: var(--space-2xl);
+}
+
+/* Right media */
+.hero-media {
+    position: relative;
+}
+
+.hero-media img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-2xl);
+    border: 1px solid var(--border-color);
 }
 
 .stat-item {
@@ -1323,12 +1300,14 @@ p {
 /* Responsive Design */
 @media (max-width: 1024px) {
     .hero-content {
-        text-align: center;
+        grid-template-columns: 1fr;
+        gap: var(--space-3xl);
     }
     
     .hero-text {
         max-width: 100%;
         padding: 0 var(--space-lg);
+        text-align: center;
     }
     
     .hero-title {
@@ -1339,9 +1318,8 @@ p {
         font-size: var(--font-size-lg);
     }
     
-    .hero-stats {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    .hero-buttons { justify-content: center; }
+    .hero-stats { grid-template-columns: repeat(3, 1fr); }
     
     .about-content {
         grid-template-columns: 1fr;
@@ -1407,32 +1385,14 @@ p {
     
     .hero-text {
         padding: 0 var(--space-md);
+        text-align: center;
     }
-    
-    .hero-title {
-        font-size: var(--font-size-4xl);
-        line-height: 1.2;
-    }
-    
+
     .hero-subtitle {
         font-size: var(--font-size-lg);
         line-height: 1.6;
     }
-    
-    .hero-investment {
-        padding: var(--space-lg);
-        margin-bottom: var(--space-xl);
-    }
-    
-    .hero-investment h3 {
-        font-size: var(--font-size-lg);
-    }
-    
-    .hero-investment p {
-        font-size: var(--font-size-sm);
-        line-height: 1.6;
-    }
-    
+ 
     .hero-stats {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-md);
@@ -1504,23 +1464,7 @@ p {
         line-height: 1.6;
         margin-bottom: var(--space-xl);
     }
-    
-    .hero-investment {
-        padding: var(--space-md);
-        margin-bottom: var(--space-lg);
-    }
-    
-    .hero-investment h3 {
-        font-size: var(--font-size-base);
-        margin-bottom: var(--space-sm);
-    }
-    
-    .hero-investment p {
-        font-size: var(--font-size-xs);
-        line-height: 1.5;
-        margin-bottom: var(--space-sm);
-    }
-    
+
     .hero-buttons {
         flex-direction: column;
         gap: var(--space-sm);
@@ -1814,7 +1758,7 @@ p {
   .gallery-desc {
     padding: 0.8rem 1rem 1rem;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: #c5cbdb;
     line-height: 1.5;
 }
 
@@ -1823,74 +1767,13 @@ p {
 .hero { position: relative; overflow: hidden; }
 .hero-content { position: relative; z-index: 3; }
 
-/* default (dark) hero background - your image (no backslash, remove \ if present) */
-.hero-background {
-  position: absolute;
-  inset: 0;
-  z-index: 0; /* behind content */
-  background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.8)),
-              url("dark\ background.jpg") center/cover no-repeat;
-  transition: background 0.35s ease, filter 0.35s ease;
-  will-change: transform, filter;
-}
-
-/* overlay between image and content (use low opacity so text readable) */
-.hero-background::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(45deg, rgba(37,99,235,0.09), rgba(5,150,105,0.06));
-  transition: background 0.35s ease, opacity 0.35s ease;
-}
-
 /* TEXT default */
 .hero-text { color: #fff; transition: color 0.35s ease; }
-
-/* LIGHT MODE OVERRIDES — target both attribute and body class */
-html[data-theme="light"] .hero-background,
-body.light .hero-background {
-  /* same image, but lighten via a white overlay + small filter tweak */
-  background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(245,245,245,0.72)),
-              url("dark\ background.jpg") center/cover no-repeat !important;
-  filter: brightness(1.05) contrast(1.02) !important;
-}
-
-html[data-theme="light"] .hero-background::after,
-body.light .hero-background::after {
-  background: linear-gradient(45deg, rgba(37,99,235,0.04), rgba(5,150,105,0.03)) !important;
-  opacity: 0.95;
-}
 
 /* Text colour for light mode */
 html[data-theme="light"] .hero-text,
 body.light .hero-text {
   color: #0f1724 !important; /* dark text for readability */
-}
-
-/* If something still overrides it, force it */
-html[data-theme="light"] .hero-background,
-body.light .hero-background { background-blend-mode: normal !important; }
-
-/* Quick transition smoothing */
-.hero, .hero-background, .hero-background::after, .hero-text { transition: all 0.35s ease !important; }
-
-/* Smooth hero transition */
-.hero-background,
-.hero-background::after,
-.hero-text {
-  transition: background 0.4s ease, filter 0.4s ease, color 0.35s ease, opacity 0.35s ease;
-}
-
-/* gentle brightness changes */
-html[data-theme="dark"] .hero-background,
-body.dark .hero-background {
-  filter: brightness(0.72) contrast(0.98);
-}
-html[data-theme="light"] .hero-background,
-body.light .hero-background {
-  filter: brightness(1.06) contrast(1.02);
 }
 
 /* ensure readable text */
