@@ -28,7 +28,7 @@ const elements = {
   adminInquiriesList: document.getElementById("adminInquiriesList"),
 };
 
-// Enhanced Properties Data - Consistent with HTML
+// Enhanced Properties Data
 let properties = [
   {
     id: 1,
@@ -122,21 +122,20 @@ let properties = [
   },
   {
     id: 6,
-    title: "Investment Land Package",
-    description:
-      "Multiple plots of land available for investment, with potential for high returns.",
-    location: "Oke-Oyi, Ilorin",
-    price: "₦60M",
-    type: "land",
+    title: "Two Story Buildings",
+    description: "Two storey buildings, each 4 spacious flats and each 100M.",
+    location: "Sawmill road, Ilorin",
+    price: "₦100M",
+    type: "House",
     status: "sale",
-    beds: 0,
-    baths: 0,
+    plots: "3 each",
+    flats: "4 each",
     size: "5 Plots",
-    image: "sixproject.jpg",
-    features: ["5 Plots", "Investment", "High Returns"],
-    amenities: ["Multiple Plots", "Investment Ready"],
-    yearBuilt: null,
-    area: "Oke-Oyi",
+    image: "prop.jpg",
+    features: ["3 Plots each", "2 Story Building", "4 flats each"],
+    amenities: ["Multiple Plots", "Genuine documents", "Near Road"],
+    yearBuilt: 2018,
+    area: "Saw mill",
   },
 ];
 
