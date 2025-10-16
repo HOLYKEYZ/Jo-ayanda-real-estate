@@ -511,8 +511,8 @@ html[data-theme="dark"] .hero-title {
 
 .properties-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: var(--space-2xl);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-xl);
 }
 
 .property-card {
@@ -522,18 +522,21 @@ html[data-theme="dark"] .hero-title {
   box-shadow: var(--shadow-lg);
   transition: all var(--transition);
   border: 1px solid rgba(51, 65, 85, 0.3);
+  display: flex;
+  flex-direction: column;
 }
 
 .property-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   box-shadow: var(--shadow-2xl);
   border-color: var(--primary);
 }
 
 .property-image {
   position: relative;
-  height: 280px;
+  height: 220px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .property-image img {
@@ -553,7 +556,7 @@ html[data-theme="dark"] .hero-title {
 }
 
 .property-card:hover .property-image img {
-  transform: scale(1.05);
+  transform: scale(0.95);
 }
 
 .property-status {
@@ -592,38 +595,41 @@ html[data-theme="dark"] .hero-title {
 }
 
 .property-details {
-  padding: var(--space-2xl);
+  padding: var(--space-lg) var(--space-lg) var(--space-xl);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .property-details h3 {
-  font-size: var(--font-size-xl);
-  margin-bottom: var(--space-md);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-sm);
   color: var(--text-primary);
   line-height: 1.3;
 }
 
 .property-location {
   color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
 }
 
 .property-features {
   display: flex;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
   flex-wrap: wrap;
 }
 
 .property-features span {
   background: rgba(37, 99, 235, 0.1);
   color: var(--primary);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -633,8 +639,10 @@ html[data-theme="dark"] .hero-title {
 
 .property-description {
   color: var(--text-secondary);
-  margin-bottom: var(--space-xl);
-  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+  line-height: 1.6;
+  font-size: var(--font-size-sm);
+  flex: 1;
 }
 
 /* Quick Services */
