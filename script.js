@@ -1113,7 +1113,7 @@ function submitContactForm() {
   const message = formData.get("message");
 
   // Create mailto link
-  const mailtoLink = `mailto:ayandajacob62@gmail.com?subject=${encodeURIComponent(
+  const mailtoLink = `mailto:nextphaserealestateltd@gmail.com?subject=${encodeURIComponent(
     type
   )}&body=${encodeURIComponent(
     `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
