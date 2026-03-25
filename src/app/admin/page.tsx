@@ -2,40 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { type Property } from "@/data/properties";
-import { Plus, Edit, Trash2, LogOut, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, Loader2, ArrowLeft, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Login State
+
+  // login state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  
-  // Data State
+
+  // data state
   const [properties, setProperties] = useState<Property[]>([]);
-  
-  // Form State
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // form state
+  const [showForm, setShowForm] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
-  const [formData, setFormData] = useState<Partial<Property>>({
-    title: "", description: "", location: "", price: "", type: "house",
-    status: "sale", beds: 0, baths: 0, size: "", image: "",
-    features: [], amenities: [], yearBuilt: null, area: ""
+  const [formData, setFormData] = useState({
+    title: "", description: "", location: "", price: "", type: "house" as string,
+    status: "sale" as string, beds: 0, baths: 0, size: "", image: "/images/property.jpg",
+    features: "", amenities: "", area: ""
   });
 
-  // Init
   useEffect(() => {
     const token = localStorage.getItem("nextphase_admin_token");
     if (token) {
@@ -48,11 +43,9 @@ export default function AdminDashboard() {
   const fetchProperties = async () => {
     try {
       const res = await fetch("/api/properties");
-      if (res.ok) {
-        setProperties(await res.json());
-      }
-    } catch (err) {
-      toast.error("Failed to fetch properties");
+      if (res.ok) setProperties(await res.json());
+    } catch {
+      toast.error("Could not load properties");
     }
   };
 
@@ -65,127 +58,161 @@ export default function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
-      
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem("nextphase_admin_token", data.token);
         setIsAuthenticated(true);
         fetchProperties();
       } else {
-        setLoginError("Invalid email or password");
+        setLoginError("Wrong email or password. Please try again.");
       }
-    } catch (err) {
-      setLoginError("An error occurred during login");
+    } catch {
+      setLoginError("Something went wrong. Check your internet and try again.");
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem("nextphase_admin_token");
     setIsAuthenticated(false);
+    setShowForm(false);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this property?")) return;
-    
+  const handleDelete = async (id: number, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
     try {
       const res = await fetch(`/api/properties/${id}`, { method: "DELETE" });
       if (res.ok) {
         setProperties(properties.filter(p => p.id !== id));
-        toast.success("Property deleted");
+        toast.success(`"${title}" has been deleted`);
       } else {
-        toast.error("Failed to delete property");
+        toast.error("Could not delete. Please try again.");
       }
-    } catch (err) {
-      toast.error("An error occurred");
+    } catch {
+      toast.error("Something went wrong");
     }
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Prepare data
     const payload = {
       ...formData,
-      features: typeof formData.features === 'string' 
-        ? (formData.features as string).split(',').map(s => s.trim()).filter(Boolean)
-        : formData.features,
-      amenities: typeof formData.amenities === 'string'
-        ? (formData.amenities as string).split(',').map(s => s.trim()).filter(Boolean)
-        : formData.amenities,
+      features: formData.features.split(',').map(s => s.trim()).filter(Boolean),
+      amenities: formData.amenities.split(',').map(s => s.trim()).filter(Boolean),
+      yearBuilt: null,
     };
 
     try {
       const url = editingProperty ? `/api/properties/${editingProperty.id}` : "/api/properties";
       const method = editingProperty ? "PUT" : "POST";
-      
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-
       if (res.ok) {
-        const savedProperty = await res.json();
+        const saved = await res.json();
         if (editingProperty) {
-          setProperties(properties.map(p => p.id === savedProperty.id ? savedProperty : p));
+          setProperties(properties.map(p => p.id === saved.id ? saved : p));
+          toast.success(`"${saved.title}" updated successfully`);
         } else {
-          setProperties([...properties, savedProperty]);
+          setProperties([...properties, saved]);
+          toast.success(`"${saved.title}" added successfully`);
         }
-        setIsDialogOpen(false);
-        toast.success(editingProperty ? "Property updated" : "Property added");
+        setShowForm(false);
+        setEditingProperty(null);
       } else {
-        toast.error("Failed to save property");
+        toast.error("Could not save. Please check your details and try again.");
       }
-    } catch (err) {
-      toast.error("An error occurred");
+    } catch {
+      toast.error("Something went wrong");
     }
   };
 
-  const openNewDialog = () => {
+  const openNewForm = () => {
     setEditingProperty(null);
     setFormData({
       title: "", description: "", location: "", price: "", type: "house",
       status: "sale", beds: 0, baths: 0, size: "", image: "/images/property.jpg",
-      features: [], amenities: [], yearBuilt: null, area: ""
+      features: "", amenities: "", area: ""
     });
-    setIsDialogOpen(true);
+    setShowForm(true);
   };
 
-  const openEditDialog = (property: Property) => {
+  const openEditForm = (property: Property) => {
     setEditingProperty(property);
     setFormData({
-      ...property,
-      // Convert arrays to comma-separated strings for easy editing
-      features: property.features.join(", ") as unknown as string[],
-      amenities: property.amenities.join(", ") as unknown as string[],
+      title: property.title,
+      description: property.description,
+      location: property.location,
+      price: property.price,
+      type: property.type,
+      status: property.status,
+      beds: property.beds,
+      baths: property.baths,
+      size: property.size,
+      image: property.image,
+      features: property.features.join(", "),
+      amenities: property.amenities.join(", "),
+      area: property.area || ""
     });
-    setIsDialogOpen(true);
+    setShowForm(true);
   };
 
+  // loading
   if (isLoading) {
-    return <div className="flex h-[60vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>;
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
   }
 
+  // login screen
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-[80vh] items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Admin Login</CardTitle>
-            <CardDescription>Enter your credentials to manage properties</CardDescription>
+      <div className="flex min-h-[80vh] items-center justify-center px-4">
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <CardDescription>Sign in to manage your properties</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Email</label>
-                <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
+                <label className="text-sm font-medium">Email Address</label>
+                <Input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="h-12 text-base"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Password</label>
-                <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+                <Input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="h-12 text-base"
+                />
               </div>
-              {loginError && <p className="text-sm text-red-500">{loginError}</p>}
-              <Button type="submit" className="w-full bg-blue-600">Login</Button>
+              {loginError && (
+                <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                  {loginError}
+                </p>
+              )}
+              <Button type="submit" className="w-full h-12 text-base bg-blue-600 hover:bg-blue-700 font-semibold">
+                Sign In
+              </Button>
+              <div className="text-center pt-2">
+                <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors">
+                  ← Back to website
+                </Link>
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -193,155 +220,296 @@ export default function AdminDashboard() {
     );
   }
 
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
-          <p className="text-slate-500 dark:text-slate-400">Manage your real estate listings</p>
-        </div>
+  // property form
+  if (showForm) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
-          <Button onClick={openNewDialog} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" /> Add Property
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => { setShowForm(false); setEditingProperty(null); }}
+            className="rounded-full"
+          >
+            <ArrowLeft className="h-5 w-5" />
           </Button>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            {editingProperty ? `Editing: ${editingProperty.title}` : "Add New Property"}
+          </h1>
         </div>
-      </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 font-medium">
-              <tr>
-                <th className="px-6 py-4">Title</th>
-                <th className="px-6 py-4">Location</th>
-                <th className="px-6 py-4">Price</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {properties.map(property => (
-                <tr key={property.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{property.title}</td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{property.location}</td>
-                  <td className="px-6 py-4 font-medium">{property.price}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
-                      {property.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => openEditDialog(property)}>
-                        <Edit className="h-4 w-4 text-blue-600" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(property.id)}>
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {properties.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">No properties found. Add one to get started.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Add/Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingProperty ? "Edit Property" : "Add New Property"}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSave} className="space-y-6 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Title *</label>
-                <Input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Price *</label>
-                <Input required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Location *</label>
-                <Input required value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Image URL Path *</label>
-                <Input required value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="/images/property.jpg" />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Type</label>
-                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value as Property["type"]})}>
-                  <option value="house">House</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="land">Land</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Status</label>
-                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as Property["status"]})}>
-                  <option value="sale">For Sale</option>
-                  <option value="rent">For Rent</option>
-                  <option value="lease">For Lease</option>
-                </select>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-4 md:col-span-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Beds</label>
-                  <Input type="number" min="0" value={formData.beds} onChange={e => setFormData({...formData, beds: parseInt(e.target.value) || 0})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Baths</label>
-                  <Input type="number" min="0" value={formData.baths} onChange={e => setFormData({...formData, baths: parseInt(e.target.value) || 0})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Size/Area</label>
-                  <Input value={formData.size} onChange={e => setFormData({...formData, size: e.target.value})} placeholder="e.g. 2 Plots" />
-                </div>
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium">Description *</label>
-                <textarea 
-                  required 
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  value={formData.description} 
-                  onChange={e => setFormData({...formData, description: e.target.value})}
-                  rows={4}
+        <Card>
+          <CardContent className="p-4 sm:p-6">
+            <form onSubmit={handleSave} className="space-y-5">
+              {/* title */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold">Property Name *</label>
+                <Input
+                  required
+                  value={formData.title}
+                  onChange={e => setFormData({...formData, title: e.target.value})}
+                  placeholder="e.g. 4 Bedroom Bungalow"
+                  className="h-12 text-base"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Features (comma separated)</label>
-                <Input value={(formData.features as unknown as string) || ""} onChange={e => setFormData({...formData, features: e.target.value as unknown as string[]})} placeholder="Pool, Garage, Garden" />
+              {/* price + location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Price *</label>
+                  <Input
+                    required
+                    value={formData.price}
+                    onChange={e => setFormData({...formData, price: e.target.value})}
+                    placeholder="e.g. ₦40M or Contact for Price"
+                    className="h-12 text-base"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Location *</label>
+                  <Input
+                    required
+                    value={formData.location}
+                    onChange={e => setFormData({...formData, location: e.target.value})}
+                    placeholder="e.g. GRA, Ilorin"
+                    className="h-12 text-base"
+                  />
+                </div>
               </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Amenities (comma separated)</label>
-                <Input value={(formData.amenities as unknown as string) || ""} onChange={e => setFormData({...formData, amenities: e.target.value as unknown as string[]})} placeholder="C of O, Fenced" />
-              </div>
-            </div>
 
-            <div className="flex justify-end gap-4 pt-4 border-t">
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Save Property</Button>
+              {/* type + status */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Property Type</label>
+                  <select
+                    className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
+                    value={formData.type}
+                    onChange={e => setFormData({...formData, type: e.target.value})}
+                  >
+                    <option value="house">House</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="land">Land</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Listing Type</label>
+                  <select
+                    className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
+                    value={formData.status}
+                    onChange={e => setFormData({...formData, status: e.target.value})}
+                  >
+                    <option value="sale">For Sale</option>
+                    <option value="rent">For Rent</option>
+                    <option value="lease">For Lease</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* beds, baths, size */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Bedrooms</label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={formData.beds}
+                    onChange={e => setFormData({...formData, beds: parseInt(e.target.value) || 0})}
+                    className="h-12 text-base"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Bathrooms</label>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={formData.baths}
+                    onChange={e => setFormData({...formData, baths: parseInt(e.target.value) || 0})}
+                    className="h-12 text-base"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Land Size</label>
+                  <Input
+                    value={formData.size}
+                    onChange={e => setFormData({...formData, size: e.target.value})}
+                    placeholder="e.g. 2 Plots"
+                    className="h-12 text-base"
+                  />
+                </div>
+              </div>
+
+              {/* description */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold">Description *</label>
+                <textarea
+                  required
+                  className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  value={formData.description}
+                  onChange={e => setFormData({...formData, description: e.target.value})}
+                  rows={4}
+                  placeholder="Describe the property..."
+                />
+              </div>
+
+              {/* image path */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold">Image Path</label>
+                <Input
+                  value={formData.image}
+                  onChange={e => setFormData({...formData, image: e.target.value})}
+                  placeholder="/images/property.jpg"
+                  className="h-12 text-base"
+                />
+                <p className="text-xs text-slate-500">The path to the property image in the /images folder</p>
+              </div>
+
+              {/* features + amenities */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Key Features</label>
+                  <Input
+                    value={formData.features}
+                    onChange={e => setFormData({...formData, features: e.target.value})}
+                    placeholder="Pool, Garage, Garden"
+                    className="h-12 text-base"
+                  />
+                  <p className="text-xs text-slate-500">Separate with commas</p>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold">Documents/Amenities</label>
+                  <Input
+                    value={formData.amenities}
+                    onChange={e => setFormData({...formData, amenities: e.target.value})}
+                    placeholder="C of O, Fenced, Survey Plan"
+                    className="h-12 text-base"
+                  />
+                  <p className="text-xs text-slate-500">Separate with commas</p>
+                </div>
+              </div>
+
+              {/* buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                <Button type="submit" className="h-12 text-base bg-blue-600 hover:bg-blue-700 font-semibold flex-1 gap-2">
+                  <Save className="h-4 w-4" />
+                  {editingProperty ? "Save Changes" : "Add Property"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-12 text-base gap-2"
+                  onClick={() => { setShowForm(false); setEditingProperty(null); }}
+                >
+                  <X className="h-4 w-4" />
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // main dashboard
+  return (
+    <div className="space-y-6">
+      {/* header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Your Properties</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">{properties.length} {properties.length === 1 ? 'listing' : 'listings'} total</p>
+        </div>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <Button onClick={openNewForm} className="bg-blue-600 hover:bg-blue-700 h-11 text-sm font-semibold flex-1 sm:flex-none gap-2">
+            <Plus className="h-4 w-4" /> Add New Property
+          </Button>
+          <Button variant="outline" onClick={handleLogout} className="h-11 text-sm gap-2">
+            <LogOut className="h-4 w-4" /> Sign Out
+          </Button>
+        </div>
+      </div>
+
+      {/* property cards */}
+      <div className="grid gap-4">
+        {properties.map(property => (
+          <div
+            key={property.id}
+            className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden hover:border-blue-200 dark:hover:border-blue-800 transition-colors"
+          >
+            <div className="flex flex-col sm:flex-row">
+              {/* thumbnail */}
+              <div className="relative w-full sm:w-40 h-40 sm:h-auto shrink-0">
+                <Image
+                  src={property.image}
+                  alt={property.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 160px"
+                />
+              </div>
+
+              {/* details */}
+              <div className="flex-1 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg truncate">
+                    {property.title}
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm truncate mt-1">
+                    {property.location}
+                  </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">
+                      {property.price}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                      For {property.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* actions */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openEditForm(property)}
+                    className="h-10 px-4 gap-2 text-sm"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(property.id, property.title)}
+                    className="h-10 px-4 gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
             </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+          </div>
+        ))}
+
+        {properties.length === 0 && (
+          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <p className="text-lg text-slate-500 dark:text-slate-400 mb-4">No properties yet</p>
+            <Button onClick={openNewForm} className="bg-blue-600 hover:bg-blue-700 gap-2">
+              <Plus className="h-4 w-4" /> Add Your First Property
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* back to site link */}
+      <div className="text-center pt-4">
+        <Link href="/" className="text-sm text-slate-500 hover:text-blue-600 transition-colors">
+          ← Back to website
+        </Link>
+      </div>
     </div>
   );
 }

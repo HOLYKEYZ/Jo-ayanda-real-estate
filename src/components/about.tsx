@@ -28,7 +28,7 @@ export function About() {
           </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -79,7 +79,7 @@ export function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-900/50 p-8 md:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xl relative overflow-hidden"
+            className="bg-white dark:bg-slate-900/50 p-6 sm:p-8 md:p-10 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-xl relative overflow-hidden lg:sticky lg:top-24"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             
