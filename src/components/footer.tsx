@@ -7,7 +7,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-900 text-slate-300 py-16 lg:py-24 border-t border-slate-800">
+    <footer className="bg-slate-900 text-slate-300 py-12 lg:py-20 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Brand */}
@@ -47,6 +47,14 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li className="border-t border-slate-800 pt-3 mt-1">
+                <a 
+                  href="/admin" 
+                  className="text-slate-500 hover:text-blue-400 transition-colors flex items-center gap-2 text-sm"
+                >
+                  Admin Login
+                </a>
+              </li>
             </ul>
           </div>
 

@@ -17,10 +17,10 @@ export function PropertyGallery() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
-              Property Gallery
+              More Listings
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              A quick look at more of our exclusive properties and commercial listings.
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              Additional properties and commercial spaces worth checking out.
             </p>
           </motion.div>
         </div>

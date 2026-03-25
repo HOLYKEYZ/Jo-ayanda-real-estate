@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,7 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 lg:px-6">
         {/* logo */}
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 shrink-0">
           {mounted && (
             <Image
               src={
@@ -65,9 +65,9 @@ export function Navbar() {
                   : "/images/NextPhase Real Estate 1.png"
               }
               alt="NextPhase Real Estate"
-              width={200}
-              height={40}
-              className="h-10 w-auto object-contain"
+              width={180}
+              height={36}
+              className="h-8 sm:h-10 w-auto object-contain"
               priority
             />
           )}
@@ -89,18 +89,27 @@ export function Navbar() {
         </ul>
 
         {/* controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* admin button */}
+          <Link
+            href="/admin"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            Admin
+          </Link>
+
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+            className="rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-blue-900/50 h-9 w-9"
             aria-label="Toggle theme"
           >
             {mounted && (theme === "dark" ? (
-              <Sun className="h-5 w-5 text-amber-400" />
+              <Sun className="h-4 w-4 text-amber-400" />
             ) : (
-              <Moon className="h-5 w-5 text-slate-600" />
+              <Moon className="h-4 w-4 text-slate-600" />
             ))}
           </Button>
 
@@ -108,7 +117,7 @@ export function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden rounded-full"
+            className="lg:hidden rounded-full h-9 w-9"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -121,22 +130,33 @@ export function Navbar() {
       <div
         className={cn(
           "lg:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
         <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-700/50 px-4 py-4">
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="block py-2 px-4 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium"
+                  className="block py-3 px-4 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium"
                 >
                   {link.label}
                 </a>
               </li>
             ))}
+            {/* admin link in mobile menu */}
+            <li className="border-t border-slate-200 dark:border-slate-800 mt-2 pt-2">
+              <Link
+                href="/admin"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium"
+              >
+                <Lock className="h-4 w-4" />
+                Admin Login
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

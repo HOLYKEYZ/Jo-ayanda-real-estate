@@ -13,7 +13,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
   return (
     <Card className={`group overflow-hidden rounded-2xl border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm hover:shadow-2xl hover:border-blue-300/50 dark:hover:border-blue-700/50 transition-all duration-500 hover:-translate-y-2 flex flex-col ${className || ""}`}>
       {/* Image Container */}
-      <div className="relative h-[240px] w-full overflow-hidden">
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
         <Image
           src={property.image}
           alt={property.title}

@@ -50,11 +50,10 @@ export function Services() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
-              Our Services
+              What We Do
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              Comprehensive real estate solutions tailored to your needs. From
-              first-time buyers to seasoned investors, we&#39;ve got you covered!
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              Whether you&#39;re buying your first home or growing your portfolio, here is how we can help.
             </p>
           </motion.div>
         </div>

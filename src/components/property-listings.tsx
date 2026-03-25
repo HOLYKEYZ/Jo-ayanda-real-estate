@@ -62,10 +62,10 @@ export function PropertyListings({ initialProperties }: { initialProperties: Pro
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
-              Property Listings
+              All Properties
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              Browse our comprehensive collection of properties. Find your perfect match.
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              Browse everything we have on offer. Use the filters to narrow things down.
             </p>
           </motion.div>
         </div>

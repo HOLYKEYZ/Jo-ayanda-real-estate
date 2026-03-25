@@ -42,11 +42,10 @@ export function Contact() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
-              Contact Us
+              Get in Touch
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              Contact us today to explore our exclusive listings and make your
-              property dream a reality!
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              Interested in a property or have questions? Reach out and we&#39;ll get back to you.
             </p>
           </motion.div>
         </div>

@@ -21,11 +21,10 @@ export function FeaturedProperties({ properties }: { properties: Property[] }) {
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900 dark:text-white">
-              Featured Properties
+              Featured Listings
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              Discover our handpicked selection of premium properties. Let&#39;s build
-              your dream home together now!
+            <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
+              Take a look at some of our top properties currently available.
             </p>
           </motion.div>
         </div>
