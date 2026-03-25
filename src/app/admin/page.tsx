@@ -352,16 +352,49 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              {/* image path */}
+              {/* image upload */}
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold">Image Path</label>
-                <Input
-                  value={formData.image}
-                  onChange={e => setFormData({...formData, image: e.target.value})}
-                  placeholder="/images/property.jpg"
-                  className="h-12 text-base"
-                />
-                <p className="text-xs text-slate-500">The path to the property image in the /images folder</p>
+                <label className="text-sm font-semibold">Property Image</label>
+                <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                  {formData.image && (
+                    <div className="relative w-full sm:w-20 h-32 sm:h-20 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm bg-slate-50">
+                      <Image src={formData.image} alt="Preview" fill className="object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 w-full relative">
+                    <Input
+                      type="file"
+                      accept="image/jpeg, image/png, image/webp"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        const toastId = toast.loading("Uploading image...");
+                        const data = new FormData();
+                        data.append("file", file);
+                        
+                        try {
+                          const res = await fetch("/api/upload", {
+                            method: "POST",
+                            body: data,
+                          });
+                          
+                          if (res.ok) {
+                            const result = await res.json();
+                            setFormData({ ...formData, image: result.path });
+                            toast.success("Image uploaded successfully", { id: toastId });
+                          } else {
+                            toast.error("Failed to upload image", { id: toastId });
+                          }
+                        } catch (error) {
+                          toast.error("Error uploading image", { id: toastId });
+                        }
+                      }}
+                      className="h-12 text-base pt-2.5 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/40 dark:file:text-blue-300"
+                    />
+                    <p className="text-xs text-slate-500 mt-2">Select a photo to upload. It will replace the current image.</p>
+                  </div>
+                </div>
               </div>
 
               {/* features + amenities */}

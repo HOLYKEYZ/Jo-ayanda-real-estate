@@ -35,9 +35,16 @@ export function Navbar() {
   }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
     setIsOpen(false);
-    const element = document.querySelector(href);
+    
+    // If not on home page, let the default navigation happen (to /#section)
+    if (window.location.pathname !== "/") {
+      return;
+    }
+
+    // If on home page, handle smooth scroll
+    e.preventDefault();
+    const element = document.querySelector(href.replace('/', ''));
     if (element) {
       const offset = 80;
       const top = element.getBoundingClientRect().top + window.scrollY - offset;
@@ -78,8 +85,8 @@ export function Navbar() {
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
+                href={link.href.startsWith('#') ? `/${link.href}` : link.href}
+                onClick={(e) => handleNavClick(e, link.href.startsWith('#') ? `/${link.href}` : link.href)}
                 className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 dark:after:bg-blue-400 after:transition-all hover:after:w-full"
               >
                 {link.label}
@@ -138,8 +145,8 @@ export function Navbar() {
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
+                  href={link.href.startsWith('#') ? `/${link.href}` : link.href}
+                  onClick={(e) => handleNavClick(e, link.href.startsWith('#') ? `/${link.href}` : link.href)}
                   className="block py-3 px-4 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium"
                 >
                   {link.label}
