@@ -82,7 +82,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`/api/properties/${id}`, { method: "DELETE" });
       if (res.ok) {
-        setProperties(properties.filter(p => p.id !== id));
+        setProperties(prev => prev.filter(p => p.id !== id));
         toast.success(`"${title}" has been deleted`);
       } else {
         toast.error("Could not delete. Please try again.");
@@ -112,10 +112,10 @@ export default function AdminDashboard() {
       if (res.ok) {
         const saved = await res.json();
         if (editingProperty) {
-          setProperties(properties.map(p => p.id === saved.id ? saved : p));
+          setProperties(prev => prev.map(p => p.id === saved.id ? saved : p));
           toast.success(`"${saved.title}" updated successfully`);
         } else {
-          setProperties([...properties, saved]);
+          setProperties(prev => [...prev, saved]);
           toast.success(`"${saved.title}" added successfully`);
         }
         setShowForm(false);
@@ -247,7 +247,7 @@ export default function AdminDashboard() {
                 <Input
                   required
                   value={formData.title}
-                  onChange={e => setFormData({...formData, title: e.target.value})}
+                  onChange={e => setFormData(prev => ({...prev, title: e.target.value}))}
                   placeholder="e.g. 4 Bedroom Bungalow"
                   className="h-12 text-base"
                 />
@@ -260,7 +260,7 @@ export default function AdminDashboard() {
                   <Input
                     required
                     value={formData.price}
-                    onChange={e => setFormData({...formData, price: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, price: e.target.value}))}
                     placeholder="e.g. ₦40M or Contact for Price"
                     className="h-12 text-base"
                   />
@@ -270,7 +270,7 @@ export default function AdminDashboard() {
                   <Input
                     required
                     value={formData.location}
-                    onChange={e => setFormData({...formData, location: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, location: e.target.value}))}
                     placeholder="e.g. GRA, Ilorin"
                     className="h-12 text-base"
                   />
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                   <select
                     className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
                     value={formData.type}
-                    onChange={e => setFormData({...formData, type: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, type: e.target.value}))}
                   >
                     <option value="house">House</option>
                     <option value="apartment">Apartment</option>
@@ -297,7 +297,7 @@ export default function AdminDashboard() {
                   <select
                     className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
                     value={formData.status}
-                    onChange={e => setFormData({...formData, status: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, status: e.target.value}))}
                   >
                     <option value="sale">For Sale</option>
                     <option value="rent">For Rent</option>
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
                     type="number"
                     min="0"
                     value={formData.beds}
-                    onChange={e => setFormData({...formData, beds: parseInt(e.target.value) || 0})}
+                    onChange={e => setFormData(prev => ({...prev, beds: parseInt(e.target.value) || 0}))}
                     className="h-12 text-base"
                   />
                 </div>
@@ -324,7 +324,7 @@ export default function AdminDashboard() {
                     type="number"
                     min="0"
                     value={formData.baths}
-                    onChange={e => setFormData({...formData, baths: parseInt(e.target.value) || 0})}
+                    onChange={e => setFormData(prev => ({...prev, baths: parseInt(e.target.value) || 0}))}
                     className="h-12 text-base"
                   />
                 </div>
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
                   <label className="text-sm font-semibold">Land Size</label>
                   <Input
                     value={formData.size}
-                    onChange={e => setFormData({...formData, size: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, size: e.target.value}))}
                     placeholder="e.g. 2 Plots"
                     className="h-12 text-base"
                   />
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
                   required
                   className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   value={formData.description}
-                  onChange={e => setFormData({...formData, description: e.target.value})}
+                  onChange={e => setFormData(prev => ({...prev, description: e.target.value}))}
                   rows={4}
                   placeholder="Describe the property..."
                 />
@@ -381,7 +381,7 @@ export default function AdminDashboard() {
                           
                           if (res.ok) {
                             const result = await res.json();
-                            setFormData({ ...formData, image: result.path });
+                            setFormData(prev => ({ ...prev, image: result.path }));
                             toast.success("Image uploaded successfully", { id: toastId });
                           } else {
                             toast.error("Failed to upload image", { id: toastId });
@@ -403,7 +403,7 @@ export default function AdminDashboard() {
                   <label className="text-sm font-semibold">Key Features</label>
                   <Input
                     value={formData.features}
-                    onChange={e => setFormData({...formData, features: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, features: e.target.value}))}
                     placeholder="Pool, Garage, Garden"
                     className="h-12 text-base"
                   />
@@ -413,7 +413,7 @@ export default function AdminDashboard() {
                   <label className="text-sm font-semibold">Documents/Amenities</label>
                   <Input
                     value={formData.amenities}
-                    onChange={e => setFormData({...formData, amenities: e.target.value})}
+                    onChange={e => setFormData(prev => ({...prev, amenities: e.target.value}))}
                     placeholder="C of O, Fenced, Survey Plan"
                     className="h-12 text-base"
                   />
