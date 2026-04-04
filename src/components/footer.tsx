@@ -47,14 +47,7 @@ export function Footer() {
                   </a>
                 </li>
               ))}
-              <li className="border-t border-slate-800 pt-3 mt-1">
-                <a 
-                  href="/admin" 
-                  className="text-slate-500 hover:text-blue-400 transition-colors flex items-center gap-2 text-sm"
-                >
-                  Admin Login
-                </a>
-              </li>
+
             </ul>
           </div>
 

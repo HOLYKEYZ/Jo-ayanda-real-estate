@@ -97,14 +97,7 @@ export function Navbar() {
 
         {/* controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* admin button */}
-          <Link
-            href="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
-          >
-            <Lock className="h-3.5 w-3.5" />
-            Admin
-          </Link>
+
 
           <Button
             variant="ghost"
@@ -153,17 +146,7 @@ export function Navbar() {
                 </a>
               </li>
             ))}
-            {/* admin link in mobile menu */}
-            <li className="border-t border-slate-200 dark:border-slate-800 mt-2 pt-2">
-              <Link
-                href="/admin"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-2 py-3 px-4 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium"
-              >
-                <Lock className="h-4 w-4" />
-                Admin Login
-              </Link>
-            </li>
+
           </ul>
         </div>
       </div>
