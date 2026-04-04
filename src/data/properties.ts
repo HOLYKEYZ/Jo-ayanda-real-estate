@@ -181,6 +181,37 @@ export const defaultProperties: Property[] = [
     "yearBuilt": null,
     "area": "Tanke",
   },
+  {
+    id: 9,
+    title: "PRIME COMMERCIAL PROPERTY FOR SALE – ASA DAM ROAD, ILORIN",
+    description: "An exceptional investment opportunity in a highly strategic and fast-growing commercial hub! Location: Directly on Asa Dam Road, Ilorin. Landmark: Opposite ITF, Ilorin. Position: Corner piece facing an adjoining road – maximum visibility and accessibility! Property Features: Multiple upstairs structures suitable for offices, shops, warehouses, and stalls. High traffic location – perfect for business growth. Excellent road frontage on two sides. Ideal for commercial, retail, or mixed-use development. Whether you're looking to expand your business, invest in rental income, or secure a prime commercial asset, this property ticks all the boxes! Asking Price: ₦200,000,000. Serious buyers and investors only. Send a DM or call now to schedule an inspection!",
+    location: "Asa Dam Road, Opposite ITF, Ilorin",
+    price: "₦200,000,000",
+    type: "commercial",
+    status: "sale",
+    beds: 0,
+    baths: 0,
+    size: "Corner Piece",
+    image: "/images/newimage.jpg",
+    features: [
+      "Multiple upstairs structures",
+      "Corner piece",
+      "Strategic hub",
+      "Mixed-use development",
+      "Offices",
+      "Shops",
+      "Warehouses",
+      "Stalls",
+    ],
+    amenities: [
+      "Excellent road frontage",
+      "High traffic location",
+      "Maximum visibility",
+      "Opposite ITF",
+    ],
+    yearBuilt: null,
+    area: "Asa Dam Road",
+  },
 ];
 
 // gallery items (separate from main property listings)
