@@ -192,7 +192,7 @@ export const defaultProperties: Property[] = [
     beds: 0,
     baths: 0,
     size: "Corner Piece",
-    image: "/images/newimage.jpg",
+    image: "/images/structures.jpg",
     features: [
       "Multiple upstairs structures",
       "Corner piece",
