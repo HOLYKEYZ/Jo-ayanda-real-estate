@@ -3,6 +3,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { type Property } from '@/data/properties';
 
+export const dynamic = 'force-dynamic';
+
 const dataFilePath = path.join(process.cwd(), 'src', 'data', 'properties.json');
 
 async function getProperties(): Promise<Property[]> {

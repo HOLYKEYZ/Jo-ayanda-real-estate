@@ -96,7 +96,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           )}
         </div>
 
-        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 group-hover:line-clamp-none transition-all duration-300 mt-auto">
+        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 group-hover:line-clamp-none mt-auto">
           {property.description}
         </p>
       </CardContent>
