@@ -2,10 +2,20 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 import { type Property } from '@/data/properties';
+import { getGitHubFileContent, uploadToGitHub } from '@/lib/github';
 
 const dataFilePath = path.join(process.cwd(), 'src', 'data', 'properties.json');
 
 async function getProperties(): Promise<Property[]> {
+  const githubContent = await getGitHubFileContent('src/data/properties.json');
+  if (githubContent) {
+    try {
+      return JSON.parse(githubContent) as Property[];
+    } catch (e) {
+      console.error("Failed to parse GitHub properties JSON:", e);
+    }
+  }
+
   const fileContent = await fs.readFile(dataFilePath, 'utf8');
   return JSON.parse(fileContent) as Property[];
 }
@@ -25,7 +35,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     
     properties[index] = { ...properties[index], ...updatedData, id: propertyId };
     
-    await fs.writeFile(dataFilePath, JSON.stringify(properties, null, 2), 'utf8');
+    const jsonString = JSON.stringify(properties, null, 2);
+    
+    const githubSuccess = await uploadToGitHub('src/data/properties.json', jsonString, `auto-commit: update property ID ${propertyId}`, false);
+    
+    if (process.env.NODE_ENV !== 'production' || !githubSuccess) {
+      try {
+        await fs.writeFile(dataFilePath, jsonString, 'utf8');
+      } catch (err) {
+        console.error("Local file save failed:", err);
+      }
+    }
     
     return NextResponse.json(properties[index]);
   } catch (error) {
@@ -47,7 +67,17 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
     
-    await fs.writeFile(dataFilePath, JSON.stringify(properties, null, 2), 'utf8');
+    const jsonString = JSON.stringify(properties, null, 2);
+    
+    const githubSuccess = await uploadToGitHub('src/data/properties.json', jsonString, `auto-commit: delete property ID ${propertyId}`, false);
+    
+    if (process.env.NODE_ENV !== 'production' || !githubSuccess) {
+        try {
+            await fs.writeFile(dataFilePath, jsonString, 'utf8');
+        } catch (err) {
+            console.error("Local file save failed:", err);
+        }
+    }
     
     return NextResponse.json({ success: true, message: 'Property deleted successfully' });
   } catch (error) {

@@ -3,11 +3,24 @@ import fs from 'fs/promises';
 import path from 'path';
 import { type Property } from '@/data/properties';
 
+import { getGitHubFileContent, uploadToGitHub } from '@/lib/github';
+
 export const dynamic = 'force-dynamic';
 
 const dataFilePath = path.join(process.cwd(), 'src', 'data', 'properties.json');
 
 async function getProperties(): Promise<Property[]> {
+  // Try fetching newest content from GitHub first to bypass vercel local file caching
+  const githubContent = await getGitHubFileContent('src/data/properties.json');
+  if (githubContent) {
+    try {
+      return JSON.parse(githubContent) as Property[];
+    } catch (e) {
+      console.error("Failed to parse GitHub properties JSON:", e);
+    }
+  }
+
+  // Fallback to local fs build cache
   const fileContent = await fs.readFile(dataFilePath, 'utf8');
   return JSON.parse(fileContent) as Property[];
 }
@@ -32,7 +45,19 @@ export async function POST(request: Request) {
     
     properties.push(propertyWithId);
     
-    await fs.writeFile(dataFilePath, JSON.stringify(properties, null, 2), 'utf8');
+    const jsonString = JSON.stringify(properties, null, 2);
+    
+    // Update GitHub repo directly
+    const githubSuccess = await uploadToGitHub('src/data/properties.json', jsonString, 'auto-commit: add new property from admin dashboard', false);
+    
+    // Fallback to local fs
+    if (process.env.NODE_ENV !== 'production' || !githubSuccess) {
+      try {
+        await fs.writeFile(dataFilePath, jsonString, 'utf8');
+      } catch (err) {
+        console.error("Local file write failed:", err);
+      }
+    }
     
     return NextResponse.json(propertyWithId, { status: 201 });
   } catch (error) {
