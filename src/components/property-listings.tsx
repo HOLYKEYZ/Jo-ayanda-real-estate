@@ -35,13 +35,14 @@ export function PropertyListings({ initialProperties }: { initialProperties: Pro
         // Simple numeric extraction for basic filtering
         const priceNum = parseInt(property.price.replace(/[^\d]/g, ""));
         if (!isNaN(priceNum)) {
-          if (priceRange === "0-50") priceMatch = priceNum < 50;
-          if (priceRange === "50-100") priceMatch = priceNum >= 50 && priceNum <= 100;
-          if (priceRange === "100-200") priceMatch = priceNum > 100 && priceNum <= 200;
-          if (priceRange === "200+") priceMatch = priceNum > 200;
+          const normalized = property.price.toLowerCase().includes("m") ? priceNum : priceNum / 1000000;
+          if (priceRange === "0-50") priceMatch = normalized < 50;
+          if (priceRange === "50-100") priceMatch = normalized >= 50 && normalized <= 100;
+          if (priceRange === "100-200") priceMatch = normalized > 100 && normalized <= 200;
+          if (priceRange === "200+") priceMatch = normalized > 200;
         } else if (property.price.toLowerCase().includes("contact")) {
             // Include contact for price in all ranges or specific ones? Let's just include them if no specific range matches, or exclude them.
-            priceMatch = false; // Exclude if we want numeric
+            priceMatch = true;
         }
       }
 
